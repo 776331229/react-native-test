@@ -89,12 +89,8 @@ export default class Home extends Component {
             .then((responseJson) => {
                 let res = Mock.mock(responseJson);
                 if(res.success){
-
-                    setTimeout(()=>{
-                        this.setState({isRefreshing: false});
-                    },500);
-
                     this.setState({
+                        isRefreshing:false,
                         dataSource:this.state.dataSource.cloneWithRows(res.data),
                         pageInfo:{
                             total: res.total / this.state.pageInfo.pageNum
