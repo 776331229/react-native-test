@@ -12,7 +12,7 @@ import {
     Navigator,
     TouchableOpacity
 } from 'react-native';
-import Home from './home/home';
+import Tab from './tab';
 
 export default class Login extends Component {
     constructor(props) {
@@ -31,8 +31,8 @@ export default class Login extends Component {
         //这里传递了navigator作为props
         if(navigator) {
             navigator.push({
-                name: 'Home',
-                component: Home,
+                name: 'tab',
+                component: Tab,
             })
         }
     }
