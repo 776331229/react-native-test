@@ -6,7 +6,8 @@
 
 import React, {Component} from 'react';
 import Icons from 'react-native-vector-icons/Ionicons'
-import Mock from 'mockjs'
+import config from './../../utils/config'
+import http from './../../utils/http'
 import {
     AppRegistry,
     View,
@@ -16,8 +17,16 @@ import {
     Dimensions,
     Image,
     TouchableHighlight,
-    RefreshControl
+    RefreshControl,
+    ActivityIndicator
 } from 'react-native';
+
+let dataItem = {
+    lists:[],
+    page:1, // 当前第几页
+    pageNum:10, // 一页加载几条数据
+    total:0 // 一共有几页
+}
 
 export default class Home extends Component {
     constructor(props) {
@@ -26,12 +35,85 @@ export default class Home extends Component {
         this.state = {
             isRefreshing:false, // 是否正在刷新
             dataSource:ds.cloneWithRows([]),
-            pageInfo:{
-                page:1, // 当前第几页
-                pageNum:10, // 一页加载几条数据
-                total:0 // 一共有几页
-            }
         }
+    }
+
+    /**
+     * 组件家在完成
+     * */
+    componentDidMount(){
+        this._fetchDta();
+    }
+
+    /**
+     * 获取数据
+     * */
+    _fetchDta(){
+        console.log("当前第"+dataItem.page+"页");
+        http.get(config.api.base+config.api.creations , {
+            acessToken: 'asd',
+            page: dataItem.page
+        }).then((res)=>{
+            if(res.success){
+                this._handleData(res);
+            }
+        }).catch((error) => {
+            console.error(error);
+        });
+    }
+
+    /**
+     * 获取到数据后，对数据进行处理
+     * */
+    _handleData(res){
+        if(dataItem.page === 1 ) dataItem.lists = [];
+        ++dataItem.page;
+        dataItem.total = res.total;
+        console.log(dataItem.lists);
+        dataItem.lists = dataItem.lists.concat(res.data);
+
+        setTimeout(()=>{
+            this.setState({
+                isRefreshing:false,
+                dataSource:this.state.dataSource.cloneWithRows(dataItem.lists),
+            })
+        },1000);
+    }
+
+    /**
+     * 下拉刷新,下面调用时候， 用bind（this）,保持该函数里this的指向。
+     * */
+    _onRefresh(){
+        if(this.state.isRefreshing){
+            return;
+        }
+        this.setState({isRefreshing: true});
+        this._fetchDta();
+    }
+
+    /**
+     * 上拉加载数据
+     * */
+    _onEndReached(){
+        if(dataItem.total === this.state.dataSource.length){
+            return;
+        }
+        this._fetchDta();
+    }
+
+    _renderFooter(){
+        if(dataItem.total === this.state.dataSource.length)
+        return (
+            <View>
+                <Text>没有更多的了</Text>
+            </View>
+        )
+
+        return (
+            <ActivityIndicator
+
+            />
+        )
     }
 
     /**
@@ -73,47 +155,6 @@ export default class Home extends Component {
         )
     }
 
-    /**
-     * 组件家在完成
-     * */
-    componentDidMount(){
-        this._fetchDta();
-    }
-
-    /**
-     * 获取数据
-     * */
-    _fetchDta(){
-        fetch('http://rapapi.org/mockjs/19824/api/videoList?acessToken=asd&page='+this.state.pageInfo.page)
-            .then((response) => response.json())
-            .then((responseJson) => {
-                let res = Mock.mock(responseJson);
-                if(res.success){
-                    this.setState({
-                        isRefreshing:false,
-                        dataSource:this.state.dataSource.cloneWithRows(res.data),
-                        pageInfo:{
-                            total: res.total / this.state.pageInfo.pageNum
-                        }
-                    })
-                }
-
-            }).catch((error) => {
-            console.error(error);
-        });
-    }
-
-    /**
-     * 下拉刷新,下面调用时候， 用bind（this）,保持该函数里this的指向。
-     * */
-    _onRefresh(){
-        if(this.state.isRefreshing){
-            return;
-        }
-        this.setState({isRefreshing: true});
-        this._fetchDta();
-    }
-
     render() {
         return (
             <View style={styles.container}>
@@ -132,9 +173,12 @@ export default class Home extends Component {
                             titleColor="#aaa"
                         />
                     }
+                    onEndReached={this._onEndReached.bind(this)}
+                    onEndReachedThreshold={50}
+                    renderFooter={ this._renderFooter.bind(this) }
                     showsVerticalScrollIndicator={false}
                     enableEmptySections={true}
-                    iosautomaticallyAdjustContentInsets={false}
+                    automaticallyAdjustContentInsets={false}
                 />
             </View>
         );
