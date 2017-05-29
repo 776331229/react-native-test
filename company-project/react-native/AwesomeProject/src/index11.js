@@ -20,7 +20,7 @@ import {
     TextInput,
     Navigator
 } from 'react-native';
-import Nav from './components/Nav/'
+import Nav from './components/ListItem/'
 import Login from './views/login'
 
 export default class AwesomeProject extends Component {

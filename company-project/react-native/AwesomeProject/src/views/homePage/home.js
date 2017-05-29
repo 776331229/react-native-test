@@ -5,7 +5,7 @@
  */
 
 import React, {Component} from 'react';
-import Icons from 'react-native-vector-icons/Ionicons'
+import ListItem from './../../components/ListItem'
 import config from './../../utils/config'
 import http from './../../utils/http'
 import {
@@ -15,8 +15,6 @@ import {
     StyleSheet,
     ListView,
     Dimensions,
-    Image,
-    TouchableHighlight,
     RefreshControl,
     ActivityIndicator
 } from 'react-native';
@@ -49,7 +47,6 @@ export default class Home extends Component {
      * 获取数据
      * */
     _fetchDta(){
-        console.log("当前第"+dataItem.page+"页");
         http.get(config.api.base+config.api.creations , {
             acessToken: 'asd',
             page: dataItem.page
@@ -64,12 +61,12 @@ export default class Home extends Component {
 
     /**
      * 获取到数据后，对数据进行处理
+     * @param res 获得到的数据
      * */
     _handleData(res){
         if(dataItem.page === 1 ) dataItem.lists = [];
         ++dataItem.page;
         dataItem.total = res.total;
-        console.log(dataItem.lists);
         dataItem.lists = dataItem.lists.concat(res.data);
 
         setTimeout(()=>{
@@ -95,17 +92,21 @@ export default class Home extends Component {
      * 上拉加载数据
      * */
     _onEndReached(){
-        if(dataItem.total === this.state.dataSource.length){
+        if(dataItem.total === dataItem.lists.length){
             return;
         }
         this._fetchDta();
     }
 
+    /**
+     * 上拉加载底部样式，当还有数据时候，显示loading
+     * 当没有更多数据，且有数据时候，则提示没有更多了
+     * */
     _renderFooter(){
-        if(dataItem.total === this.state.dataSource.length)
+        if(dataItem.total === dataItem.lists.length && dataItem.lists.length > 5)
         return (
-            <View>
-                <Text>没有更多的了</Text>
+            <View style={styles.noData}>
+                <Text style={styles.noDataText}>没有更多的了</Text>
             </View>
         )
 
@@ -121,37 +122,7 @@ export default class Home extends Component {
      * */
     _renderRow(row){
         return (
-            <TouchableHighlight>
-                <View style={styles.rowItem}>
-                    <Text style={styles.rowTitle}>{row.title}</Text>
-                    <Image
-                        style={styles.rowItemImage}
-                        source={{uri: row.image}}
-                    >
-                        <Icons
-                            name="ios-play"
-                            size={28}
-                            style={styles.playIcon}
-                        />
-                    </Image>
-                    <View style={styles.handleBox}>
-                        <View style={styles.handleItem}>
-                            <Icons
-                                name="ios-heart-outline"
-                                style={styles.handleIcon}
-                            />
-                            <Text style={styles.handleText}>喜欢</Text>
-                        </View>
-                        <View style={styles.handleItem}>
-                            <Icons
-                                name="ios-chatboxes-outline"
-                                style={styles.handleIcon}
-                            />
-                            <Text style={styles.handleText}>评论</Text>
-                        </View>
-                    </View>
-                </View>
-            </TouchableHighlight>
+            <ListItem row={row} />
         )
     }
 
@@ -200,53 +171,12 @@ let styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: '600',
     },
-    rowItem: {
+    noData: {
         width: Dimensions.get('window').width,
-        marginBottom: 10,
-        backgroundColor: '#fff'
+        padding: 10
     },
-    rowTitle: {
-        padding: 10,
-    },
-    rowItemImage: {
-        width: Dimensions.get('window').width,
-        height: Dimensions.get('window').width * 0.56,
-    },
-    playIcon: {
-        position: 'absolute',
-        right: 15,
-        bottom: 15,
-        width: 46,
-        height: 46,
-        paddingTop: 9,
-        paddingLeft: 18,
-        borderColor: '#fff',
-        borderWidth: 1,
-        borderRadius: 23,
-        backgroundColor: 'transparent',
-        color: '#ee735c',
-    },
-    handleBox: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        backgroundColor: '#eee'
-
-    },
-    handleItem: {
-        flexDirection: 'row',
-        justifyContent: 'center',
-        width:Dimensions.get('window').width/2 - 0.5,
-        padding: 10,
-        backgroundColor: '#fff',
-
-    },
-    handleIcon: {
-        fontSize: 18,
-        color: '#333'
-    },
-    handleText: {
-        fontSize: 16,
-        paddingLeft: 5,
+    noDataText: {
+        textAlign: 'center',
         color: '#333'
     }
 });
