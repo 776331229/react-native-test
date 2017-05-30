@@ -117,15 +117,6 @@ export default class Home extends Component {
         )
     }
 
-    /**
-     * render 列表一项
-     * */
-    _renderRow(row){
-        return (
-            <ListItem row={row} />
-        )
-    }
-
     render() {
         return (
             <View style={styles.container}>
@@ -134,7 +125,7 @@ export default class Home extends Component {
                 </View>
                 <ListView
                     dataSource={this.state.dataSource}
-                    renderRow={this._renderRow.bind(this)}
+                    renderRow={(row)=> <ListItem row={row} />}
                     refreshControl={
                         <RefreshControl
                             refreshing={this.state.isRefreshing}

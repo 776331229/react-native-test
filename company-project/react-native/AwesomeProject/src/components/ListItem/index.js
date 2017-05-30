@@ -21,7 +21,7 @@ export default class ListItem extends Component {
         this.state = {
             up: 1  // 是否点赞，1：点赞，0：不点赞
         }
-    };
+    }
 
     render() {
         let row = this.props.row;
@@ -42,10 +42,10 @@ export default class ListItem extends Component {
                     <View style={styles.handleBox}>
                         <View style={styles.handleItem}>
                             <Icons
-                                name={this.state.up === 1 ? 'ios-heart' : 'ios-heart-outline'}
-                                style={[styles.handleIcon,this.state.up === 0 ? null : styles.up]}
+                                name={row.up === 1 ? 'ios-heart' : 'ios-heart-outline'}
+                                style={[styles.handleIcon,row.up === 1? styles.up : null ]}
                             />
-                            <Text style={[styles.handleText , this.state.up === 0 ? null : styles.up]}>喜欢</Text>
+                            <Text style={[styles.handleText , row.up === 1 ? styles.up : null ]}>喜欢</Text>
                         </View>
                         <View style={styles.handleItem}>
                             <Icons
