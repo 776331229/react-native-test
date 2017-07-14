@@ -11,7 +11,8 @@ module.exports = {
         }
     },
     api: {
-        base: 'http://rapapi.org/mockjs/19824',
+        base1: 'http://rapapi.org/mockjs/19824',
+        base: 'http://localhost:3000',
         creations: '/api/videoList'
     }
 }

@@ -10,7 +10,7 @@ let http = {};
  * GET请求
  * */
 http.get = (url,params)=>{
-
+    // url = config.api.base+url;
     if(params){
         url+='?'+formatParams(params);
     }
@@ -23,6 +23,7 @@ http.get = (url,params)=>{
  * POST请求
  * */
 http.post = (url,body)=>{
+    // url = config.api.base+url;
     let options = lodash.extend(config.header,{
         body:JSON.stringify(body)
     });

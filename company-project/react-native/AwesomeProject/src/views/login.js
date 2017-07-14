@@ -9,7 +9,6 @@ import {
     AppRegistry,
     View,
     Text,
-    Navigator,
     TouchableOpacity
 } from 'react-native';
 import Tab from './tab';

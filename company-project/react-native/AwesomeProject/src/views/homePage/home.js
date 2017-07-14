@@ -6,6 +6,7 @@
 
 import React, {Component} from 'react';
 import ListItem from './../../components/ListItem'
+import Detail from './detail'
 import config from './../../utils/config'
 import http from './../../utils/http'
 import {
@@ -47,7 +48,7 @@ export default class Home extends Component {
      * 获取数据
      * */
     _fetchDta(){
-        http.get(config.api.base+config.api.creations , {
+        http.get(config.api.base1+config.api.creations , {
             acessToken: 'asd',
             page: dataItem.page
         }).then((res)=>{
@@ -98,6 +99,15 @@ export default class Home extends Component {
         this._fetchDta();
     }
 
+    _renderItem(row){
+        return (
+            <ListItem
+                key={row.id}
+                onGoNext={this._goNext.bind(this)}
+                row={row} />
+        )
+    }
+
     /**
      * 上拉加载底部样式，当还有数据时候，显示loading
      * 当没有更多数据，且有数据时候，则提示没有更多了
@@ -117,6 +127,19 @@ export default class Home extends Component {
         )
     }
 
+    /**
+     * 跳转到下一个页面
+     * */
+    _goNext(row){
+        this.props.navigator.push({
+            name : 'detail',
+            component: Detail,
+            passProps: {
+                data: 'llll'
+            }
+        });
+    }
+
     render() {
         return (
             <View style={styles.container}>
@@ -125,7 +148,7 @@ export default class Home extends Component {
                 </View>
                 <ListView
                     dataSource={this.state.dataSource}
-                    renderRow={(row)=> <ListItem row={row} />}
+                    renderRow={this._renderItem.bind(this)}
                     refreshControl={
                         <RefreshControl
                             refreshing={this.state.isRefreshing}

@@ -10,6 +10,7 @@ import {
     View,
     Text,
     StyleSheet,
+    Navigator,
     TabBarIOS
 } from 'react-native';
 
@@ -49,7 +50,20 @@ export default class Tab extends Component {
                             selectedTab: 'homeTab',
                         });
                     }}>
-                    <Home />
+                    <Navigator
+                        initialRoute={{
+                            name: 'home',
+                            component: Home,
+                            title: '首页',
+                        }}
+
+                        renderScene={
+                            (route , navigator)=>{
+                                let Component = route.component;
+                                return <Component {...route.component} navigator={navigator} />
+                            }
+                        }
+                    />
                 </Icons.TabBarItem>
                 <Icons.TabBarItem
                     title="录制"

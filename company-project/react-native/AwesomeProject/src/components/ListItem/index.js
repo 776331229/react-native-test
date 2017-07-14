@@ -26,7 +26,7 @@ export default class ListItem extends Component {
     render() {
         let row = this.props.row;
         return (
-            <TouchableHighlight>
+            <TouchableHighlight onPress={this.props.onGoNext}>
                 <View style={styles.rowItem}>
                     <Text style={styles.rowTitle}>{row.title}</Text>
                     <Image
@@ -111,9 +111,10 @@ let styles = StyleSheet.create({
     },
 
     handleText: {
-        fontSize: 16,
         paddingLeft: 5,
-        color: '#333'
+        color: '#333',
+        fontSize: 16,
+        fontWeight: '600',
     }
 });
 
